@@ -6,7 +6,7 @@ export default function TodoList({tasklist, setTaskList}){
         fetch('https://three-do-api-lm.web.app/tasks')
         .then(results => results.json())
         .then(tasks => setTaskList(tasks))
-        .catch(console.error())
+        .catch(err => console.error(err))
         
     }, [setTaskList])
 
