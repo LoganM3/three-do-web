@@ -4,25 +4,26 @@ const {Search} = Input
 
 
 
-export default function AddTask({setTaskList}){
+export default function AddTask({setTasklist}){
     const [task, setTask] = useState('')
     const addTask = () => {
-        fetch('https://three-do-api-lm.web.app/tasks',{
+        fetch('http://localhost:5555/tasks',{
             method: 'Post',
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization':token,
             },
             body: JSON.stringify({task, done: false})
         })
             .then(results => results.json())
             .then(data => {
-                setTaskList(data)
+                setTasklist(data)
                 setTask('')
             })
             .catch(err => console.error(err))
     }
     return(
-     
+     <div className='add-task'>
         <Search
         value = {task}
         onChange = {e => setTask(e.target.value)}
@@ -30,6 +31,7 @@ export default function AddTask({setTaskList}){
         size = "Large"
         onSearch={addTask}
         />
+        </div>
         
     )
 

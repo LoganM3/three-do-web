@@ -1,23 +1,58 @@
-import { useEffect } from "react"
+import { useEffect,useState } from "react"
+import {List, Alert} from "antd"
+import TodoListCard from "./TodoListCard"
 
-export default function TodoList({tasklist, setTaskList}){
+
+export default function TodoList({tasklist, setTasklist, token}){
+    const [loading, setLoading] = useState()
+    const [error,setError] = useState()
     // call the api and use setTasklist to fill in state....
     useEffect(() => {
-        fetch('https://three-do-api-lm.web.app/tasks')
+        fetch('http://localhost:5555/tasks',{
+            headers:{
+                "Authorization":token,
+            }
+        })
         .then(results => results.json())
-        .then(tasks => setTaskList(tasks))
-        .catch(err => console.error(err))
+        .then(tasks => {
+            setTasklist(tasks)
+            setLoading(false)
+            setError('')
+        })
+        .catch(err => {
+            console.error(err)
+            setError(err.message)
+            setLoading(false)
+        })
         
-    }, [setTaskList])
+    }, [token,setTasklist,setLoading, setError])
 
     if(!tasklist){
         return <h2>No task to complete!</h2>
       }
     return(
-        <ul>
-            {tasklist.map(task => (
-                <li key={task.id}>{task.task}</li>
-            ))}
-        </ul>
+        <>
+        {error &&<Alert
+         message="Error"
+         description={error}
+         type="error"
+         showIcon
+        />}
+     <div className='task-list'>
+        <List
+          dataSource={tasklist}
+          loading={loading}
+          renderItem={(item) => (
+            <TodoListCard
+             key = {item.id} 
+            item={item} 
+            setLoading={setLoading}
+            setTasklist={setTasklist}
+            setError={setError}/>
+            
+          )}
+        />
+      </div>
+        </>
     )
 }
